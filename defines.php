@@ -7,6 +7,7 @@ define('GROUPS', 15004);
 define('SCENE', 15005);
 define('NAME', 9001);
 define('LIGHT', 3311);
+define('POWER_OUTLET', 3312);
 define('ONOFF', 5850);//3311/0/5850 = device on/off
 define('DIMMER', 5851);//3311/0/5851 = device brightness
 define('INSTANCE_ID', 9003);
@@ -25,6 +26,7 @@ define('TYPE', 5750);
 //From my own observation on the Tradfri devices
 define('TYPE_REMOTE_CONTROL', 0);
 define('TYPE_LIGHT', 2);
+define('TYPE_POWER_OUTLET', 3);
 define('TYPE_MOTION_SENSOR', 4);
 
 //stream identifiers for proc_open
