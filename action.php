@@ -38,7 +38,7 @@ $json = file_get_contents('php://input');
 $options = json_decode($json, true);
 
 //check inputs given
-//if(!isset($options['action'])) error('Missing action');//action can be omit when activating scene
+if(!isset($options['action'])) error('Missing action');
 if(!isset($options['type'])) error('Missing type');
 if(!isset($options['value'])) error('Missing value');
 
@@ -82,25 +82,28 @@ if($action == 'dim') {
 	}
 
 	if(!is_int($options['value']) or $options['value'] < 0 or $options['value'] > 1) error('Invalid value');
-} else if ($action == null) {
-	if(!is_int($options['value'])) error('Invalid value');
-	if($options['type'] != 'scene') error('Invalid action or type');
+} else if ($action == 'scene') {
+	// Find scene id
+	if (!is_int($options['value'])) {
+		$scene_id = find_scene_id($device_or_group, $options['value']);
+		if ($scene_id === null) error("Couldn't find scene '" . $options['value'] . "' in group '" . $device_or_group['name'] . "'");
+	} else {
+		$scene_id = $options['value'];
+	}
 } else {
 	error('Invalid action');
 }
 
 //construct the payload depending on the type and action
 $payload = null;
-if($options['type'] == 'group' or $options['type'] == 'scene') {
+if($options['type'] == 'group') {
 	$path = GROUPS . "/{$options['id']}";//id of the group
-	if($options['type'] == 'group') {
-		if($action == 'power') {
-			$payload = '{ "' . ONOFF ."\" : {$options['value']} }";//value == 0/1
-		} else if($action == 'dim') {
-			$payload = '{ "' . DIMMER ."\" : {$options['value']} }";//value == 0..255
-		}
-	} else if($options['type'] == 'scene') {
-		$payload = '{ "' . ONOFF .'" : 1, "' . SCENE_ID . "\" : {$options['value']} }";//value == scene ID
+	if($action == 'power') {
+		$payload = '{ "' . ONOFF ."\" : {$options['value']} }";//value == 0/1
+	} else if($action == 'dim') {
+		$payload = '{ "' . DIMMER ."\" : {$options['value']} }";//value == 0..255
+	} else if ($action == 'scene') {
+		$payload = '{ "' . ONOFF .'" : 1, "' . SCENE_ID . "\" : {$scene_id} }";//value == scene ID
 	}
 } else if($options['type'] == 'device') {
 	$path = DEVICES ."/{$options['id']}";//id of the device
@@ -114,4 +117,14 @@ if($options['type'] == 'group' or $options['type'] == 'scene') {
 }
 
 $cmd = "coap-client -m put -u '$gw_user' -k '$gw_key' -e '$payload' 'coaps://$gw_address:5684/$path'";
-exec($cmd);
+
+// Delay the command - write to file
+if(isset($options['delay']) and $options['delay'] > 0) {
+	$delay = $options['delay'];
+	$cmd = "sleep $delay && $cmd";
+	$schedule_content = strtotime("+$delay seconds") . " " . $cmd . "\n";
+
+	file_put_contents($schedule_file, $schedule_content, FILE_APPEND);
+} else {
+	exec($cmd);
+}
