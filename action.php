@@ -46,6 +46,9 @@ if(!isset($options['value'])) error('Missing value');
 if(!isset($options['id'])) {
 	if(!isset($options['name'])) error('Missing id or name');
 
+	// Remove 'the ' from the name if we get a call from IFTTT
+	$options['name'] = str_replace('the ', '', $options['name']);
+
 	// Find name in device or group
 	if($options['type'] == 'device') {
 		$search_in = &$devices;
@@ -119,12 +122,11 @@ if($options['type'] == 'group') {
 $cmd = "coap-client -m put -u '$gw_user' -k '$gw_key' -e '$payload' 'coaps://$gw_address:5684/$path'";
 
 // Delay the command - write to file
-if(isset($options['delay']) and $options['delay'] > 0) {
-	$delay = $options['delay'];
+if(isset($options['delay']) and is_int($options['delay'])) {
+	$delay = $options['delay'] * 60;
 	$cmd = "sleep $delay && $cmd";
-	$schedule_content = strtotime("+$delay seconds") . " " . $cmd . "\n";
 
-	file_put_contents($schedule_file, $schedule_content, FILE_APPEND);
+	file_put_contents($schedule_file, $cmd, FILE_APPEND);
 } else {
 	exec($cmd);
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INPUT_FILE="schedule_file"
+INPUT_FILE="/var/www/home.senth.org/schedule_file"
 
 # Only do something if there are commands to run
 if [ -f $INPUT_FILE ]; then
