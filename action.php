@@ -2,7 +2,6 @@
 require('defines.php');
 require('config.php');
 require('list_internal.php');
-require('effects.php');
 
 function error($msg) {
 	die("{\"error\": \"$msg\"}");
@@ -37,6 +36,15 @@ function find_scene_id($group, $scene_name) {
 //parse json input from body
 $json = file_get_contents('php://input');
 $options = json_decode($json, true);
+
+// Special case -> kill all effects
+if ($options['action'] == 'effect' && $options['value'] == 'kill') {
+	exec("pgrep -f $schedule_file", $output);
+	foreach ($output as $pid) {
+		file_put_contents($schedule_file, "kill -15 $pid\n", FILE_APPEND);
+	}	
+}
+
 
 //check inputs given
 if(!isset($options['action'])) error('Missing action');
@@ -97,6 +105,8 @@ if($action == 'dim') {
 		$scene_id = $options['value'];
 	}
 } else if ($action == 'effect') {
+	require('effects.php');
+	
 	$options['async'] = true;
 
 	// Run the correct effect

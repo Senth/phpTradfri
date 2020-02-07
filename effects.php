@@ -125,7 +125,7 @@ $brightness_stop = 70;
 $x_increment = ($x_stop - $x_start) / $steps;
 $y_increment = ($y_stop - $y_start) / $steps;
 $brightness_increment = ($brightness_stop - $brightness_start) / $steps;
-$wait_time = 13;
+$wait_time = 30;
 $transition_time = 100;
 for ($i = 1; $i <= $steps; ++$i) {
 	$x = intval($x_start + $x_increment * $i);
