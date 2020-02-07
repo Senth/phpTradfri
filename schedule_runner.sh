@@ -7,7 +7,7 @@ if [ -f $INPUT_FILE ]; then
 	declare -a commands
 
 	# Run commands
-	/bin/bash $INPUT_FILE &
+	/bin/bash $INPUT_FILE &> /tmp/error_log
 
 	sleep 1
 

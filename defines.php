@@ -10,6 +10,13 @@ if (!defined('DEVICES')) {
 	define('NAME', 9001);
 	define('LIGHT', 3311);
 	define('POWER_OUTLET', 3312);
+	define('LIGHT_COLOR_HEX', 5706);
+	define('LIGHT_COLOR_HUE', 5707);
+	define('LIGHT_COLOR_SATURATION', 5708);
+	define('LIGHT_COLOR_X', 5709);
+	define('LIGHT_COLOR_Y', 5710);
+	define('LIGHT_MIREDS', 5711);
+	define('TRANSITION_TIME', 5712);
 	define('ONOFF', 5850);//3311/0/5850 = device on/off
 	define('DIMMER', 5851);//3311/0/5851 = device brightness
 	define('INSTANCE_ID', 9003);
