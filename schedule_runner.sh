@@ -1,16 +1,18 @@
 #!/bin/bash
 
-INPUT_FILE="/var/www/home.senth.org/schedule_file"
+INPUT_DIR="/var/www/home.senth.org"
+INPUT_FILE_PREFIX="schedule_file"
 
-# Only do something if there are commands to run
-if [ -f $INPUT_FILE ]; then
-	declare -a commands
+INPUT_FILES=($(find "$INPUT_DIR" -maxdepth 1 -name "$INPUT_FILE_PREFIX*"))
 
-	# Run commands
-	/bin/bash $INPUT_FILE &> /tmp/error_log
+# Run the commands
+for file in "${INPUT_FILES[@]}"; do
+	/bin/bash "$file" &> /tmp/error_log
+done
 
-	sleep 1
+sleep 1
 
-	# Remove file
-	rm $INPUT_FILE
-fi
+# Delete the command/file afterward
+for file in "${INPUT_FILES[@]}"; do
+	rm "$file"
+done
