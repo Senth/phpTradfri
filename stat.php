@@ -14,13 +14,13 @@ $options = json_decode($json, true);
 $value = '';
 
 if (isset($options['category'])) {
-	$category = $options['category'];
+	$category = trim($options['category']);
 } else {
 	error('No category supplied');
 }
 
 if (isset($options['value'])) {
-	$value = $options['value'];
+	$value = trim($options['value']);
 }
 
 $currentDate = date('Y-m-d H:i', time());
